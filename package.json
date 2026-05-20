@@ -1,6 +1,6 @@
 {
     "name": "ts-sha256",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Zero-dependency synchronous SHA-256 for TypeScript",
     "author": "Your Name <dev@xlsft.ru>",
     "license": "MIT",
