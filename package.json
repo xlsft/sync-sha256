@@ -38,7 +38,10 @@
         "prepublishOnly": "bun run test --timeout 30000 && bun run build",
         "publish:patch": "bun run prepublishOnly && npm version patch && npm publish",
         "publish:minor": "bun run prepublishOnly && npm version minor && npm publish",
-        "publish:major": "bun run prepublishOnly && npm version major && npm publish"
+        "publish:major": "bun run prepublishOnly && npm version major && npm publish",
+        "publish:patch:notest": "bun run build && npm version patch && npm publish",
+        "publish:minor:notest": "bun run build && npm version minor && npm publish",
+        "publish:major:notest": "bun run build && npm version major && npm publish"
     },
     "devDependencies": {
         "@types/bun": "latest",
