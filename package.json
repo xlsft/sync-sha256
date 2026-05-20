@@ -36,12 +36,12 @@
         "build": "tsc",
         "test": "bun test",
         "prepublishOnly": "bun run build",
-        "publish:patch": "bun run test --timeout 30000 && npm version patch && npm publish",
-        "publish:minor": "bun run test --timeout 30000 && npm version minor && npm publish",
-        "publish:major": "bun run test --timeout 30000 && npm version major && npm publish",
-        "publish:patch:notest": "npm version patch && npm publish",
-        "publish:minor:notest": "npm version minor && npm publish",
-        "publish:major:notest": "npm version major && npm publish"
+        "publish:patch": "bun run test --timeout 30000 && npm version patch && npm publish --access=public",
+        "publish:minor": "bun run test --timeout 30000 && npm version minor && npm publish --access=public",
+        "publish:major": "bun run test --timeout 30000 && npm version major && npm publish --access=public",
+        "publish:patch:notest": "npm version patch && npm publish --access=public",
+        "publish:minor:notest": "npm version minor && npm publish --access=public",
+        "publish:major:notest": "npm version major && npm publish --access=public"
     },
     "devDependencies": {
         "@types/bun": "latest",
