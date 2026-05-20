@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sync-sha256 demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: ui-monospace, monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        h1 { margin-bottom: 2rem; font-size: 1.5rem; font-weight: normal; }
+
+        .container { width: 100%; max-width: 600px; }
+
+        label { display: block; margin-bottom: 0.5rem; color: #888; }
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        textarea {
+            background: #000;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 1rem;
+            font-family: ui-monospace, monospace;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            resize: vertical;
+            min-height: 250px;
+        }
+
+        textarea:disabled { opacity: 0.4; color: #888; cursor: not-allowed; resize: none; }
+        textarea:focus { border-color: #888; }
+        textarea::placeholder { color: #555; }
+
+        .file-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #000;
+            border: 1px solid #555;
+            color: #fff;
+            font-family: ui-monospace, monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-btn:hover { background: #222; }
+        input[type="file"] { display: none; }
+
+        .hash-btn {
+            position: absolute;
+            bottom: -1px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #555;
+            color: #000;
+            font-family: ui-monospace, monospace;
+            font-size: 1rem;
+            padding: 1rem;
+            width: 100px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .hash-btn:hover { background: #ddd; }
+
+        .hex-wrapper {
+            position: relative;
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        .hex-wrapper input {
+            background: #000;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 1rem;
+            font-family: ui-monospace, monospace;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            padding-right: 116px;
+        }
+
+        .hex-wrapper input:focus { border-color: #888; }
+        .hex-wrapper input::placeholder { color: #555; }
+
+        .hex-perf {
+            position: absolute;
+            right: 116px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 0.8rem;
+            pointer-events: none;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .hex-perf-sep {
+            color: #555;
+        }
+
+        .hex-status {
+            font-size: 0.8rem;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        .verify-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #fff;
+            border: 1px solid #555;
+            color: #000;
+            font-family: ui-monospace, monospace;
+            font-size: 1rem;
+            padding: 0 1rem;
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .verify-btn:hover { background: #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>sync-sha256</h1>
+
+        <label for="input">message</label>
+        <div class="textarea-wrapper">
+            <textarea id="input" rows="3" placeholder="Enter text to hash..."></textarea>
+            <label class="file-btn" id="fileBtn">
+                add file
+                <input type="file" id="fileInput">
+            </label>
+            <button class="hash-btn" id="hashBtn">hash</button>
+        </div>
+
+        <div class="hex-wrapper">
+            <input type="text" id="hexInput" placeholder="output">
+            <div class="hex-perf" id="perfWrap">
+                <span id="perf"></span>
+                <span class="hex-perf-sep" id="perfSep" style="display:none;">/</span>
+                <span class="hex-status" id="status"></span>
+            </div>
+            <button class="verify-btn" id="verifyBtn">verify</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { sha256 } from 'https://cdn.jsdelivr.net/npm/sync-sha256@1/+esm';
+
+        const input = document.getElementById('input');
+        const fileInput = document.getElementById('fileInput');
+        const fileBtn = document.getElementById('fileBtn');
+        const hexInput = document.getElementById('hexInput');
+        const hashBtn = document.getElementById('hashBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const perfWrap = document.getElementById('perfWrap');
+        const perf = document.getElementById('perf');
+        const perfSep = document.getElementById('perfSep');
+        const status = document.getElementById('status');
+
+        let fileContent = null;
+        let fileName = null;
+
+        function showPerf(ms) {
+            perf.textContent = ms < 1 ? '<1ms' : ms < 1000 ? `${Math.round(ms)}ms` : `${(ms/1000).toFixed(2)}s`;
+            perfSep.style.display = status.textContent ? 'inline' : 'none';
+            requestAnimationFrame(() => {
+                hexInput.style.paddingRight = (perfWrap.offsetWidth + 138) + 'px';
+            });
+        }
+
+        function hash() {
+            const value = fileContent !== null ? fileContent : input.value;
+            if (!value) {
+                hexInput.value = '';
+                hexInput.placeholder = 'empty input';
+                perf.textContent = '';
+                status.textContent = '';
+                status.style.color = '';
+                perfSep.style.display = 'none';
+                hexInput.style.paddingRight = '180px';
+                return;
+            }
+            const t0 = performance.now();
+            const h = sha256(value);
+            showPerf(performance.now() - t0);
+            hexInput.value = h;
+            hexInput.style.color = '#fff';
+            hexInput.placeholder = 'output';
+            status.textContent = '';
+        }
+
+        function verify() {
+            const inputHash = hexInput.value.trim().toLowerCase();
+            const value = fileContent !== null ? fileContent : input.value;
+            if (!inputHash) {
+                hexInput.placeholder = 'empty input';
+                perf.textContent = '';
+                status.textContent = '';
+                status.style.color = '';
+                perfSep.style.display = 'none';
+                hexInput.style.paddingRight = '180px';
+                return;
+            }
+            if (!/^[a-f0-9]{64}$/.test(inputHash)) {
+                hexInput.placeholder = 'invalid hash';
+                perf.textContent = '';
+                status.textContent = '';
+                status.style.color = '';
+                perfSep.style.display = 'none';
+                hexInput.style.paddingRight = '180px';
+                return;
+            }
+            const t0 = performance.now();
+            const computed = sha256(value);
+            showPerf(performance.now() - t0);
+            hexInput.value = computed;
+            hexInput.style.color = '#fff';
+            hexInput.placeholder = 'output';
+            status.textContent = computed === inputHash ? 'match' : 'no match';
+            status.style.color = computed === inputHash ? '#0f0' : '#f44';
+        }
+
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            fileName = file.name;
+            const text = await file.text();
+            fileContent = text;
+            input.disabled = true;
+            input.placeholder = fileName;
+            input.value = '';
+            fileBtn.textContent = 'clear file';
+            hexInput.value = '';
+            perf.textContent = '';
+            status.textContent = '';
+            status.style.color = '';
+            perfSep.style.display = 'none';
+            hexInput.style.paddingRight = '180px';
+        });
+
+        fileBtn.addEventListener('click', () => {
+            if (fileContent !== null) {
+                fileContent = null;
+                fileName = null;
+                fileInput.value = '';
+                input.disabled = false;
+                input.placeholder = 'Enter text to hash...';
+                fileBtn.textContent = 'add file';
+                input.value = '';
+                hexInput.value = '';
+                hexInput.style.color = '#fff';
+                hexInput.placeholder = 'output';
+                perf.textContent = '';
+                status.textContent = '';
+                status.style.color = '';
+                perfSep.style.display = 'none';
+                hexInput.style.paddingRight = '180px';
+            }
+        });
+
+        fileBtn.addEventListener('click', () => {
+            if (fileContent !== null) {
+                fileContent = null;
+                fileName = null;
+                fileInput.value = '';
+                input.disabled = false;
+                input.placeholder = 'Enter text to hash...';
+                fileBtn.textContent = 'add file';
+                input.value = '';
+                hexInput.value = '';
+                hexInput.style.color = '#fff';
+                hexInput.placeholder = 'output';
+                perf.textContent = '';
+                status.textContent = '';
+                status.style.color = '';
+                perfSep.style.display = 'none';
+                hexInput.style.paddingRight = '180px';
+            }
+        });
+
+        hashBtn.addEventListener('click', hash);
+        verifyBtn.addEventListener('click', verify);
+        input.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') hash();
+        });
+    </script>
+</body>
+</html>
