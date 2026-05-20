@@ -2,6 +2,8 @@
 
 Zero-dependency, synchronous SHA-256 for TypeScript. Drop-in replacement for `js-sha256` with first-class type safety.
 
+[**Demo**](https://xlsft.github.io/sync-sha256/)
+
 - **No dependencies** — pure TypeScript, no `crypto` polyfills
 - **Synchronous** — no `await`, works in sync contexts
 - **UTF-8** — correct handling of Unicode, including surrogate pairs (emoji, CJK)
