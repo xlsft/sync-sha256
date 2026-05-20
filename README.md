@@ -1,4 +1,4 @@
-# ts-sha256
+# sync-sha256
 
 Zero-dependency, synchronous SHA-256 for TypeScript. Drop-in replacement for `js-sha256` with first-class type safety.
 
@@ -11,15 +11,15 @@ Zero-dependency, synchronous SHA-256 for TypeScript. Drop-in replacement for `js
 ## Install
 
 ```bash
-npm install ts-sha256
+npm install sync-sha256
 # or
-bun add ts-sha256
+bun add sync-sha256
 ```
 
 ## Usage
 
 ```typescript
-import { sha256 } from 'ts-sha256'
+import { sha256 } from 'sync-sha256'
 
 sha256('') // e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 sha256('The quick brown fox jumps over the lazy dog') // d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592
@@ -36,7 +36,7 @@ sha256('🎉')   // 6146299cd54818a0e659eb6ac88e80f6f8f70536bbbd962d36973f2d2323
 Returns a 64-character hex string.
 
 ```typescript
-import { sha256 } from 'ts-sha256'
+import { sha256 } from 'sync-sha256'
 
 const hash = sha256('Message to hash')
 // => 'f7bc83f430538424b13298e6aa6fb1438f4d89a51f0ed5d0a63f5b3e1230c20e'
@@ -47,13 +47,13 @@ const hash = sha256('Message to hash')
 | Package     | Size   | SHA-224 | HMAC | Streaming |
 | ----------- | ------ | ------- | ---- | --------- |
 | `js-sha256` | ~3.5KB | ✅       | ✅    | ✅         |
-| `ts-sha256` | ~2KB   | ❌       | ❌    | ❌         |
+| `sync-sha256` | ~2KB   | ❌       | ❌    | ❌         |
 
 
 
 **Use `js-sha256`** if you need SHA-224, HMAC, streaming, or byte array input.
 
-**Use `ts-sha256`** if you need a smaller, typed, synchronous string-to-hex hasher.
+**Use `sync-sha256`** if you need a smaller, typed, synchronous string-to-hex hasher.
 
 ## Benchmarks
 

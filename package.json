@@ -1,15 +1,15 @@
 {
-    "name": "ts-sha256",
+    "name": "sync-sha256",
     "version": "1.0.2",
     "description": "Zero-dependency synchronous SHA-256 for TypeScript",
     "author": "Your Name <dev@xlsft.ru>",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/xlsft/ts-sha256.git"
+        "url": "git+https://github.com/xlsft/sync-sha256.git"
     },
-    "bugs": "https://github.com/xlsft/ts-sha256/issues",
-    "homepage": "https://github.com/xlsft/ts-sha256#readme",
+    "bugs": "https://github.com/xlsft/sync-sha256/issues",
+    "homepage": "https://github.com/xlsft/sync-sha256#readme",
     "keywords": [
         "sha256",
         "hash",
