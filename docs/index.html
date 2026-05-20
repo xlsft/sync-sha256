@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sync-sha256 demo</title>
+    <link rel="preload" href="https://api.iconify.design/mdi:npm-variant.svg" as="image">
+    <link rel="preload" href="https://api.iconify.design/mdi:github.svg" as="image">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -19,7 +21,20 @@
             padding: 2rem;
         }
 
-        h1 { margin-bottom: 2rem; font-size: 1.5rem; font-weight: normal; }
+        h1 { margin-bottom: 2rem; font-size: 1.5rem; font-weight: normal; display: flex; align-items: center; justify-content: space-between; width: 100%; line-height: 100%; }
+        .header-right { display: flex; align-items: center; gap: 0.75rem; }
+        h1 a { display: flex; align-items: center; }
+        h1 a:hover { opacity: 0.5; }
+        h1 img { width: 24px; height: 24px; filter: invert(1); }
+        .version-badge {
+            background: rgba(59, 130, 246, 0.25);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            font-size: 0.75rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 3px;
+            font-family: ui-monospace, monospace;
+        }
 
         .container { width: 100%; max-width: 600px; }
 
@@ -148,7 +163,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>sync-sha256</h1>
+        <h1>
+            sync-sha256
+            <div class="header-right">
+                <a href="https://www.npmjs.com/package/sync-sha256" target="_blank" rel="noopener">
+                    <img src="https://api.iconify.design/mdi:npm-variant.svg" alt="npm">
+                </a>
+                <a href="https://github.com/xlsft/sync-sha256" target="_blank" rel="noopener">
+                    <img src="https://api.iconify.design/mdi:github.svg" alt="GitHub">
+                </a>
+                <span class="version-badge" id="versionBadge">...</span>
+            </div>
+        </h1>
 
         <label for="input">message</label>
         <div class="textarea-wrapper">
@@ -172,7 +198,13 @@
     </div>
 
     <script type="module">
-        import { sha256 } from 'https://cdn.jsdelivr.net/npm/sync-sha256@1/+esm';
+        import { sha256 } from 'https://cdn.jsdelivr.net/npm/sync-sha256@latest/+esm';
+
+        const versionBadge = document.getElementById('versionBadge');
+        fetch('https://registry.npmjs.org/sync-sha256/latest')
+            .then(r => r.json())
+            .then(data => { versionBadge.textContent = `v${data.version}`; })
+            .catch(() => { versionBadge.textContent = ''; });
 
         const input = document.getElementById('input');
         const fileInput = document.getElementById('fileInput');
