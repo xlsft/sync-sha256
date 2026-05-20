@@ -36,7 +36,6 @@
         "build": "tsc",
         "test": "bun test",
         "prepublishOnly": "bun run test --timeout 30000 && bun run build",
-        "publish": "bun run prepublishOnly && npm version patch && npm publish",
         "publish:patch": "bun run prepublishOnly && npm version patch && npm publish",
         "publish:minor": "bun run prepublishOnly && npm version minor && npm publish",
         "publish:major": "bun run prepublishOnly && npm version major && npm publish"
