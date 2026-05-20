@@ -8,8 +8,8 @@
         "type": "git",
         "url": "git+https://github.com/xlsft/ts-sha256.git"
     },
-    "bugs": "https://github.com/yourname/ts-sha256/issues",
-    "homepage": "https://github.com/yourname/ts-sha256#readme",
+    "bugs": "https://github.com/xlsft/ts-sha256/issues",
+    "homepage": "https://github.com/xlsft/ts-sha256#readme",
     "keywords": [
         "sha256",
         "hash",
